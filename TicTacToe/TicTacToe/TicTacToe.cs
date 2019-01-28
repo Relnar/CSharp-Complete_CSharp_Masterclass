@@ -59,7 +59,7 @@ namespace TicTacToe
           !GameIsADraw && !GameWon)
       {
         char boardValue = GetBoardValue(number - 1);
-        if (!boardValue.Equals('O') || !boardValue.Equals('X'))
+        if (!boardValue.Equals('O') && !boardValue.Equals('X'))
         {
           SetBoardValue(number - 1);
           GameWon = CheckGameWon(number - 1);
@@ -83,16 +83,40 @@ namespace TicTacToe
       int nRow = number / 3;
       int nCol = number % 3;
 
-      // Test horizontal match
-      return (aszBoard[(nRow + 1) % 3, nCol].Equals(PlayerValue) &&
-              aszBoard[(nRow + 2) % 3, nCol].Equals(PlayerValue)) ||
-             // Test vertical match
-             (aszBoard[nRow, (nCol + 1) % 3].Equals(PlayerValue) &&
-              aszBoard[nRow, (nCol + 2) % 3].Equals(PlayerValue)) ||
-             // Test diagonals
-             (((number+1) % 2) != 0 &&
-              aszBoard[(nRow + 1) % 3, (nCol + 2) % 3].Equals(PlayerValue) &&
-              aszBoard[(nRow + 2) % 3, (nCol + 4) % 3].Equals(PlayerValue));
+      char playerVal = PlayerValue;
+
+      // Horizontal match
+      if (aszBoard[(nRow + 1) % 3, nCol] == playerVal &&
+          aszBoard[(nRow + 2) % 3, nCol] == playerVal)
+      {
+        return true;
+      }
+      // Vertical match
+      else if (aszBoard[nRow, (nCol + 1) % 3] == playerVal &&
+               aszBoard[nRow, (nCol + 2) % 3] == playerVal)
+      {
+        return true;
+      }
+      // Elements on a diagonal are always odd
+      else if (((number + 1) % 2) != 0)
+      {
+        switch (number + 1)
+        {
+          case 1:
+            return playerVal == aszBoard[1, 1] && playerVal == aszBoard[2, 2];
+          case 3:
+            return playerVal == aszBoard[1, 1] && playerVal == aszBoard[2, 0];
+          case 5:
+            return ((playerVal == aszBoard[0, 0] && playerVal == aszBoard[2, 2]) ||
+                    (playerVal == aszBoard[2, 0] && playerVal == aszBoard[0, 2]));
+          case 7:
+            return playerVal == aszBoard[1, 1] && playerVal == aszBoard[0, 2];
+          case 9:
+            return playerVal == aszBoard[1, 1] && playerVal == aszBoard[0, 0];
+        }
+      }
+
+      return false;
     }
 
     // Private methods
